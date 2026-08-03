@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dekorika - Wujudkan Interior Impian Anda</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#C49A88', // Soft Dusty Rose / Pastel Terracotta
+                        primaryHover: '#B08573',
+                        secondary: '#50585C', // Soft Slate Gray
+                        accent: '#F4ECE4', // Soft warm pastel
+                        bgSoft: '#FDFBF7', // Very soft off-white cream
+                        highlight: '#D88C8C' // Soft red/pink for survey statement
+                    },
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'], // Casual, modern, rounded
+                        serif: ['Lora', 'serif'], // Exclusive, elegant
+                    },
+                    animation: {
+                        'marquee': 'marquee 25s linear infinite',
+                    },
+                    keyframes: {
+                        marquee: {
+                            '0%': { transform: 'translateX(0%)' },
+                            '100%': { transform: 'translateX(-50%)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Framer Motion -->
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        body {
+            background-color: #FDFBF7;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            font-family: 'Poppins', sans-serif;
+            color: #4A4A4A;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #FDFBF7; }
+        ::-webkit-scrollbar-thumb { background: #C49A88; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #B08573; }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+        
+        .marquee-container {
+            display: flex;
+            width: 200%;
+        }
+
+        /* Menyembunyikan scrollbar untuk slider gambar */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+        const { motion, AnimatePresence } = window.Motion;
+
+        // Admin WhatsApp Number (Ganti dengan nomor asli)
+        const WA_ADMIN_NUMBER = "6282117111212"; 
+
+        // Shared Image Constants (Placeholder image yang elegan)
+        const IMAGES = {
+            logo: "./assets/logo.png", // Ganti dengan path logo asli
+            mq1: "./assets/mq1.png?auto=format&fit=crop&q=80&w=400&h=300",
+            mq2: "./assets/mq2.png?auto=format&fit=crop&q=80&w=400&h=300",
+            mq3: "./assets/mq3.png?auto=format&fit=crop&q=80&w=400&h=300",
+            mq4: "./assets/mq4.png?auto=format&fit=crop&q=80&w=400&h=300",
+            mq5: "./assets/mq5.png?auto=format&fit=crop&q=80&w=400&h=300",
+            slide1: "./assets/mq1.png?auto=format&fit=crop&q=80&w=600&h=800",
+            slide2: "./assets/mq3.png?auto=format&fit=crop&q=80&w=600&h=800",
+            slide3: "./assets/mq5.png?auto=format&fit=crop&q=80&w=600&h=800",
+            // Aset 8 Gambar Project Before-After
+            proj1: "./assets/Proj1.png?auto=format&fit=crop&q=80&w=600&h=800",
+            proj2: "./assets/Proj2.png?auto=format&fit=crop&q=80&w=600&h=800",
+            proj3: "./assets/Proj3.png?auto=format&fit=crop&q=80&w=600&h=800",
+            proj4: "./assets/Proj4.png?auto=format&fit=crop&q=80&w=600&h=800",
+            proj5: "./assets/Proj5.png?auto=format&fit=crop&q=80&w=600&h=800",
+            proj6: "./assets/Proj6.png?auto=format&fit=crop&q=80&w=600&h=800",
+            proj7: "./assets/Proj7.png?auto=format&fit=crop&q=80&w=600&h=800",
+            proj8: "./assets/Proj8.png?auto=format&fit=crop&q=80&w=600&h=800"
+        };
+
+        const marqueeImages = [IMAGES.mq1, IMAGES.mq2, IMAGES.mq3, IMAGES.mq4, IMAGES.mq1, IMAGES.mq2];
+
+        const Header = () => (
+            <div className="fixed top-0 left-0 w-full z-50 glass-panel py-3 px-4 md:px-8 flex justify-between items-center">
+                <img src={IMAGES.logo} alt="Dekorika Logo" className="h-20 md:h-32 w-auto object-contain" />
+                <a 
+                    href="https://www.instagram.com/dekorika.id?igsh=dWI5bDRiZ3dtMGZw" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center space-x-2 text-secondary hover:text-primary transition-colors bg-white/50 px-3 py-2 rounded-full shadow-sm"
+                >
+                    <i data-lucide="instagram" className="w-10 h-10"></i>
+                    <span className="hidden md:inline text-sm font-medium">Instagram : @dekorika.id</span>
+                </a>
+            </div>
+        );
+
+        const BackButton = ({ onClick }) => (
+            <button 
+                onClick={onClick}
+                className="mt-8 flex items-center text-secondary hover:text-primary transition-colors text-sm font-medium pb-2 border-b-2 border-transparent hover:border-primary"
+            >
+                <i data-lucide="arrow-left" className="w-4 h-4 mr-2"></i>
+                Kembali ke Halaman Sebelumnya
+            </button>
+        );
+
+        const StepAwareness = ({ onNext }) => (
+            <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.6 }}
+                className="w-full max-w-5xl mx-auto pt-24 pb-12"
+            >
+                <div className="text-center px-4 mb-8 pt-8">
+                    <h1 className="text-2xl md:text-4xl font-serif text-secondary font-bold leading-tight max-w-4xl mx-auto">
+                        "Sering liat design-design ini muncul di smartphone Anda dan mimpi ingin punya rumah dengan Ambience Interior yang sama?"
+                    </h1>
+                </div>
+
+                {/* Marquee Section */}
+                <div className="w-full overflow-hidden mb-12 relative h-40 md:h-56">
+                    <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-bgSoft to-transparent z-10"></div>
+                    <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-bgSoft to-transparent z-10"></div>
+                    <div className="marquee-container h-full animate-marquee">
+                        {/* Duplicate lists for seamless loop */}
+                        <div className="flex w-1/2 justify-around">
+                            {marqueeImages.map((src, i) => (
+                                <img key={`a-${i}`} src={src} className="h-full w-auto object-cover rounded-xl mx-2 shadow-sm" alt="Interior Inspiration" />
+                            ))}
+                        </div>
+                        <div className="flex w-1/2 justify-around">
+                            {marqueeImages.map((src, i) => (
+                                <img key={`b-${i}`} src={src} className="h-full w-auto object-cover rounded-xl mx-2 shadow-sm" alt="Interior Inspiration" />
+                            ))}
+                        </div>
+                    </div>
+                </div>
+
+                <div className="max-w-3xl mx-auto px-4">
+                    <div className="bg-highlight/10 border border-highlight/20 p-5 rounded-2xl mb-8 text-center">
+                        <p className="text-highlight font-medium text-lg">
+                            <span className="font-bold">Menurut survey,</span> dari 100% yang ingin merenovasi, <span className="font-bold">85% mengurungkan niat</span> untuk merenovasi rumahnya karena hal-hal ini :
+                        </p>
+                    </div>
+
+                    <div className="space-y-4 mb-8">
+                        <div className="flex items-start bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                            <span className="text-primary mr-4 mt-1 bg-accent p-1.5 rounded-full">
+                                <i data-lucide="x" className="w-4 h-4"></i>
+                            </span>
+                            <p className="text-gray-600">Sering lihat referensi interior bagus di sosmed, tapi <strong>takut harganya selangit.</strong></p>
+                        </div>
+                        <div className="flex items-start bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                            <span className="text-primary mr-4 mt-1 bg-accent p-1.5 rounded-full">
+                                <i data-lucide="x" className="w-4 h-4"></i>
+                            </span>
+                            <p className="text-gray-600">Nggak ngerti soal <strong>bahan, material, atau dekorasi</strong> yang awet untuk jangka panjang.</p>
+                        </div>
+                        <div className="flex items-start bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                            <span className="text-primary mr-4 mt-1 bg-accent p-1.5 rounded-full">
+                                <i data-lucide="x" className="w-4 h-4"></i>
+                            </span>
+                            <p className="text-gray-600">Pusing nyari <strong>furniture yang cocok</strong> dengan konsep dan juga sesuai dengan kantong.</p>
+                        </div>
+                    </div>
+
+                    <div className="text-center mb-10">
+                        <div className="bg-highlight/10 border border-highlight/20 p-5 rounded-2xl mb-8 text-center">
+                            <p className="text-highlight font-medium text-lg">
+                                <span className="font-bold">Disini kami akan Buktiin, </span> <span className="font-bold">kalo renovasi rumah yang Anda impikan ternyata sangat MUDAH dan bisa jadi KENYATAAN </span> :
+                            </p>
+                        </div>
+
+                        <button 
+                            onClick={onNext}
+                            className="bg-primary hover:bg-primaryHover text-white py-4 px-10 rounded-full font-semibold text-lg transition-all transform hover:-translate-y-1 shadow-xl flex items-center mx-auto"
+                        >
+                            Dekorika Punya Solusi <i data-lucide="arrow-right" className="ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            </motion.div>
+        );
+
+        const StepGreeting = ({ onNext, onBack, userName, setUserName, title, setTitle }) => {
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                if(userName.trim() === '') return;
+                onNext();
+            };
+
+            return (
+                <motion.div 
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 1.05 }}
+                    transition={{ duration: 0.5 }}
+                    className="w-full max-w-lg mx-auto pt-32 px-4"
+                >
+                    <div className="bg-white p-8 md:p-10 rounded-3xl shadow-xl relative overflow-hidden text-center">
+                        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary to-accent"></div>
+                        
+                        <div className="bg-accent w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <i data-lucide="sparkles" className="text-primary w-8 h-8"></i>
+                        </div>
+                        
+                        <h2 className="text-2xl font-serif font-bold text-secondary mb-3">Tak Kenal maka Tak Sayang.</h2>
+                        <p className="text-gray-500 text-sm mb-8">Sebelum lanjut buktiin cara mudahnya, boleh tahu dengan siapa kami berkomunikasi saat ini?</p>
+                        
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                            <div className="flex space-x-3">
+                                <div className="w-1/3">
+                                    <select 
+                                        value={title} 
+                                        onChange={(e) => setTitle(e.target.value)}
+                                        className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none bg-bgSoft text-gray-700"
+                                    >
+                                        <option value="Pak">Mr.</option>
+                                        <option value="Ibu">Mrs.</option>
+                                        <option value="Kak">Ms.</option>
+                                    </select>
+                                </div>
+                                <div className="w-2/3">
+                                    <input 
+                                        type="text" 
+                                        value={userName}
+                                        onChange={(e) => setUserName(e.target.value)}
+                                        placeholder="Nama Panggilan"
+                                        required
+                                        className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none bg-bgSoft text-gray-700"
+                                    />
+                                </div>
+                            </div>
+                            
+                            <button 
+                                type="submit"
+                                disabled={!userName.trim()}
+                                className="w-full bg-secondary hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed text-white py-4 rounded-xl font-medium text-lg transition-colors shadow-lg"
+                            >
+                                Lanjut
+                            </button>
+                        </form>
+                        
+                        <button 
+                            onClick={() => { setUserName('Sahabat'); setTitle(''); onNext(); }}
+                            className="mt-6 text-sm text-gray-400 hover:text-primary transition-colors underline"
+                        >
+                            Lewati / Nanti saja
+                        </button>
+                    </div>
+
+                    <BackButton onClick={onBack} />
+                </motion.div>
+            );
+        };
+
+        const Slideshow = () => {
+            const [idx, setIdx] = useState(0);
+            const images = [IMAGES.slide1, IMAGES.slide2, IMAGES.slide3];
+            
+            useEffect(() => {
+                const timer = setInterval(() => {
+                    setIdx((prev) => (prev + 1) % images.length);
+                }, 3500);
+                return () => clearInterval(timer);
+            }, []);
+
+            return (
+                <div className="relative w-full h-64 md:h-[400px] rounded-2xl overflow-hidden shadow-lg border-4 border-white">
+                    {images.map((img, i) => (
+                        <img
+                            key={i}
+                            src={img}
+                            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${i === idx ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+                            alt="Dekorika Projects"
+                        />
+                    ))}
+                </div>
+            );
+        };
+
+        const ProjectCarousel = () => {
+            const [idx, setIdx] = useState(0);
+            const projectImages = [
+                IMAGES.proj1, IMAGES.proj2, IMAGES.proj3, IMAGES.proj4,
+                IMAGES.proj5, IMAGES.proj6, IMAGES.proj7, IMAGES.proj8
+            ];
+            
+            useEffect(() => {
+                // Gambar berganti setiap 3.5 detik
+                const timer = setInterval(() => {
+                    setIdx((prev) => (prev + 1) % projectImages.length);
+                }, 3500);
+                return () => clearInterval(timer);
+            }, []);
+
+            return (
+                <div className="relative w-full h-64 md:h-96 rounded-2xl overflow-hidden shadow-xl border-4 border-white mt-4 mb-8 mx-auto max-w-4xl group">
+                    {projectImages.map((src, i) => (
+                        <img
+                            key={i}
+                            src={src}
+                            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${i === idx ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+                            alt={`Projects ${i+1}`}
+                        />
+                    ))}
+                    
+                    {/* Overlay gradient agar dot indicator terlihat jelas */}
+                    <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black/50 to-transparent z-10"></div>
+                    
+                    {/* Dot Indicators */}
+                    <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-2 z-20">
+                        {projectImages.map((_, i) => (
+                            <div 
+                                key={i} 
+                                onClick={() => setIdx(i)}
+                                className={`h-2 rounded-full cursor-pointer transition-all duration-300 ${i === idx ? 'bg-white w-6' : 'bg-white/50 w-2 hover:bg-white/80'}`}
+                            ></div>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
+
+        const StepMain = ({ onBack, greetingName }) => {
+            // Calculator State
+            const [length, setLength] = useState('');
+            const [width, setWidth] = useState('');
+            const [material, setMaterial] = useState('Basic');
+            const [calcResult, setCalcResult] = useState(null);
+
+            const materials = [
+                { 
+                    id: 'Basic', 
+                    basePrice: 1800000, 
+                    desc: 'Material yang dapat dijangkau namun tidak cheapy, tetap terkesan mewah dan tahan lama.' 
+                },
+                { 
+                    id: 'Middle Range', 
+                    basePrice: 2200000, 
+                    desc: 'Ketahanan lebih baik dengan pilihan yang lebih variatif namun tetap bisa disesuaikan dan Furniture yang lebih versatile.' 
+                },
+                { 
+                    id: 'Exclusive', 
+                    basePrice: 2700000, 
+                    desc: 'Material terbaik, ketahanan dan estetika lebih tinggi, kualitas furniture terbaik, mewujudkan kesan mewah dan privilege disetiap sudut ruangan Anda.' 
+                }
+            ];
+
+            const handleCalculate = () => {
+                if(!length || !width) {
+                    alert("Mohon isi panjang dan lebar ruangan terlebih dahulu.");
+                    return;
+                }
+                
+                const area = parseFloat(length) * parseFloat(width);
+                const selectedMaterial = materials.find(m => m.id === material);
+                
+                // Menghitung harga dasar berdasarkan tipe material yang dipilih x Luas
+                const rawTotal = area * selectedMaterial.basePrice;
+                
+                // Menghitung range minimum (100%) dan maksimum (125%)
+                const minPrice = rawTotal * 1.0;
+                const maxPrice = rawTotal * 1.25;
+
+                setCalcResult({
+                    area,
+                    material,
+                    minPrice,
+                    maxPrice
+                });
+                
+                // Scroll to result slightly delay
+                setTimeout(() => {
+                    document.getElementById("hasil-kalkulator").scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
+            };
+
+            const formatRupiah = (number) => {
+                return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(number);
+            };
+
+            const formatShort = (number) => {
+                if (number >= 1000000000) return (number / 1000000000).toFixed(1).replace(/\.0$/, '') + ' Miliar';
+                if (number >= 1000000) return (number / 1000000).toFixed(0) + ' Juta';
+                return formatRupiah(number);
+            };
+
+            const handleWAMessage = (type) => {
+                let message = "";
+                if(type === 'now' && calcResult) {
+                    message = `Hai Dekorika, saya tertarik nih dengan rincian ini, tolong hubungi saya ya.%0A%0ANama Panggilan: ${greetingName}%0ALuas Ruangan: ${calcResult.area} m2%0AHitungan Budget: ${formatRupiah(calcResult.minPrice)} - ${formatRupiah(calcResult.maxPrice)}%0A%0A- Landing Page -`;
+                } else {
+                    message = `Hai Dekorika, saya ${greetingName} pengen konsul dulu deh, tolong hubungi saya ya.`;
+                }
+                
+                const waUrl = `https://wa.me/${WA_ADMIN_NUMBER}?text=${message}`;
+                window.open(waUrl, '_blank');
+            };
+
+            return (
+                <motion.div 
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -30 }}
+                    transition={{ duration: 0.6 }}
+                    className="w-full max-w-6xl mx-auto pt-32 pb-20 px-4"
+                >
+                    {/* Section 1: About Dekorika */}
+                    <div className="flex flex-col md:flex-row gap-8 items-center mb-20">
+                        <div className="w-full md:w-5/12">
+                            <Slideshow />
+                        </div>
+                        <div className="w-full md:w-7/12 bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
+                            <h2 className="text-3xl font-serif font-bold text-secondary mb-4">
+                                Halo {greetingName}, Kita Kenalan Dulu Yaa.
+                            </h2>
+                            <p className="text-gray-600 leading-relaxed mb-4">
+                                <strong>Dekorika Interior Design</strong> adalah Perusahaan yang bergerak di bidang Interior dan Konstruksi yang telah berdiri sejak tahun 2022.
+                            </p>
+                            <p className="text-gray-600 leading-relaxed mb-4">
+                                Kami dapat mengerjakan Proyek Hunian, Kantor maupun Ruangan Komersil dari mulai proses Desain sampai dengan proses pekerjaan di lapangan. 
+                            </p>
+                            <p className="text-gray-600 leading-relaxed mb-4">
+                                Perpaduan desain kreatif, workshop yang handal dan di dukung oleh tenaga ahli yang profesional membuat kami dapat selalu menyajikan desain interior terbaik sesuai dengan kebutuhan dan keinginan Anda.
+                            </p>
+
+                        </div>
+                    </div>
+
+                    {/* Section 2: Problem & Solution Table */}
+                    <div className="mb-20">
+                        <h3 className="text-2xl font-serif font-bold text-center text-secondary mb-8">
+                            3 Alasan Utama Anda Bebas Pusing Renovasi Rumah dengan Dekorika ...
+                        </h3>
+                        <div className="bg-white rounded-3xl shadow-md overflow-hidden border border-gray-200">
+                            <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-200">
+                                {/* Header (Hidden on Mobile, visual cards instead) */}
+                                <div className="hidden md:block bg-accent/50 p-6 font-serif font-bold text-lg text-secondary text-center">Kendala Umum</div>
+                                <div className="hidden md:block bg-primary/10 p-6 font-serif font-bold text-lg text-primary text-center">Solusi Dekorika</div>
+                                
+                                {/* Row 1 */}
+                                <div className="p-6 md:p-8 bg-gray-50/50 flex flex-col justify-center">
+                                    <span className="md:hidden text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Kendala</span>
+                                    <p className="text-red-700 font-medium"><i data-lucide="alert-circle" className="inline w-5 h-5 text-red-400 mr-2 -mt-1"></i>Takut harganya mahal</p>
+                                </div>
+                                <div className="p-6 md:p-8 flex flex-col justify-center">
+                                    <span className="md:hidden text-xs font-bold text-primary uppercase tracking-wider mb-2">Solusi Dekorika</span>
+                                    <p className="text-green-600">Dekorika akan menyesuaikan budget dengan kebutuhan renovasi klien, sesuai dengan type material, dan opsi parsial renovation.</p>
+                                </div>
+
+                                {/* Row 2 */}
+                                <div className="p-6 md:p-8 bg-gray-50/50 flex flex-col justify-center">
+                                    <span className="md:hidden text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Kendala</span>
+                                    <p className="text-red-700 font-medium"><i data-lucide="alert-circle" className="inline w-5 h-5 text-red-400 mr-2 -mt-1"></i>Ga ngerti bahan dan material</p>
+                                </div>
+                                <div className="p-6 md:p-8 flex flex-col justify-center">
+                                    <span className="md:hidden text-xs font-bold text-primary uppercase tracking-wider mb-2">Solusi Dekorika</span>
+                                    <p className="text-green-600">Tenang aja, tim kami dari awal akan kasih tau type material yang cocok dan sesuai dengan selera, konsep dan budget yang Anda miliki.</p>
+                                </div>
+
+                                {/* Row 3 */}
+                                <div className="p-6 md:p-8 bg-gray-50/50 flex flex-col justify-center">
+                                    <span className="md:hidden text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Kendala</span>
+                                    <p className="text-red-700 font-medium"><i data-lucide="alert-circle" className="inline w-5 h-5 text-red-400 mr-2 -mt-1"></i>Bingung pilih furniture yang cocok</p>
+                                </div>
+                                <div className="p-6 md:p-8 flex flex-col justify-center">
+                                    <span className="md:hidden text-xs font-bold text-primary uppercase tracking-wider mb-2">Solusi Dekorika</span>
+                                    <p className="text-green-600">Jasa Dekorika <strong>sudah termasuk</strong> dengan penyediaan interior dari Dekorika Furniture yang akan disesuaikan dengan konsep yang Anda pilih, jadi ga perlu bingung harus cari interior di tempat lain.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Section 3: Calculator */}
+                    <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100 max-w-4xl mx-auto">
+                        <div className="bg-gradient-to-r from-primary to-primaryHover p-8 text-white text-center">
+                            <h3 className="text-2xl font-serif font-bold">
+                                Coba kita Hitung Yuk, Perkiraan Investasi Anda untuk Renovasi Interior Rumah Anda...
+                            </h3>
+                        </div>
+                        
+                        <div className="p-8 md:p-10">
+                            <div className="grid md:grid-cols-2 gap-10">
+                                {/* Left Col: Luas */}
+                                <div>
+                                    <label className="block text-sm font-bold text-secondary mb-3 uppercase tracking-wide">Luas Ruangan (m²)</label>
+                                    <p className="text-xs text-gray-400 mb-4">Bisa untuk satu ruangan saja atau luas total 1 rumah.</p>
+                                    <div className="flex items-center space-x-3">
+                                        <div className="relative w-full">
+                                            <input 
+                                                type="number" 
+                                                value={length} 
+                                                onChange={(e) => setLength(e.target.value)}
+                                                placeholder="Panjang (m)" 
+                                                className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none bg-bgSoft text-sm"
+                                            />
+                                        </div>
+                                        <span className="text-gray-400 font-bold">X</span>
+                                        <div className="relative w-full">
+                                            <input 
+                                                type="number" 
+                                                value={width} 
+                                                onChange={(e) => setWidth(e.target.value)}
+                                                placeholder="Lebar (m)" 
+                                                className="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary outline-none bg-bgSoft text-sm"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Right Col: Material */}
+                                <div>
+                                    <label className="block text-sm font-bold text-secondary mb-3 uppercase tracking-wide">Tipe Material</label>
+                                    <div className="space-y-3">
+                                        {materials.map(m => (
+                                            <div 
+                                                key={m.id}
+                                                onClick={() => setMaterial(m.id)}
+                                                className={`cursor-pointer p-4 rounded-xl border-2 transition-all ${
+                                                    material === m.id 
+                                                    ? 'border-primary bg-primary/5' 
+                                                    : 'border-gray-100 hover:border-gray-300'
+                                                }`}
+                                            >
+                                                <div className="flex justify-between items-center mb-1">
+                                                    <span className={`font-bold ${material === m.id ? 'text-primary' : 'text-secondary'}`}>{m.id}</span>
+                                                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${material === m.id ? 'border-primary' : 'border-gray-300'}`}>
+                                                        {material === m.id && <div className="w-2.5 h-2.5 bg-primary rounded-full"></div>}
+                                                    </div>
+                                                </div>
+                                                <p className="text-xs text-gray-500 leading-relaxed mt-1">{m.desc}</p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button 
+                                onClick={handleCalculate}
+                                className="w-full mt-10 bg-secondary hover:bg-gray-800 text-white py-4 rounded-xl font-bold text-lg transition-all shadow-md flex items-center justify-center"
+                            >
+                                <i data-lucide="calculator" className="mr-2 w-5 h-5"></i> Hitung Perkiraan Investasi
+                            </button>
+                        </div>
+                        
+                        {/* Kalkulator Result Section */}
+                        <AnimatePresence>
+                            {calcResult && (
+                                <motion.div 
+                                    id="hasil-kalkulator"
+                                    initial={{ opacity: 0, height: 0 }}
+                                    animate={{ opacity: 1, height: 'auto' }}
+                                    className="bg-accent/30 border-t border-gray-200 p-8 md:p-10 text-center"
+                                >
+                                    <span className="inline-block py-1 px-3 bg-white text-secondary text-xs font-bold uppercase tracking-wider rounded-full mb-4 border border-gray-700">
+                                        Hasil Estimasi
+                                    </span>
+                                    
+                                    <div className="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-4 mb-2">
+                                        <h4 className="text-2xl md:text-4xl font-bold text-primary">
+                                            {formatRupiah(calcResult.minPrice)}
+                                        </h4>
+                                        <span className="text-gray-400 font-medium">-</span>
+                                        <h4 className="text-2xl md:text-4xl font-bold text-primary">
+                                            {formatRupiah(calcResult.maxPrice)}
+                                        </h4>
+                                    </div>
+                                    
+                                    <div className="mt-8 text-center space-y-4 max-w-2xl mx-auto">
+                                        <p className="text-gray-700 font-medium text-lg">
+                                        <span>Ini udah include Furniture yang cocok dan sesuai konsep Anda!</span>
+                                        </p>
+                                    </div>
+
+                                    {/* Kalimat Persuasif Tambahan (Terpisah dan di tengah) */}
+                                    <div className="mt-8 text-center space-y-4 max-w-2xl mx-auto">
+                                        <p className="text-gray-700 font-medium text-lg">
+                                            Bayangin aja, harga segini sangat <span className="font-bold text-primary">WORTHED</span> untuk bertahun-tahun kebahagiaan di rumah Anda sendiri.
+                                        </p>
+                                        
+                                        <div className="mt-8 text-center space-y-4 max-w-2xl mx-auto">
+                                        <p className="text-gray-700 font-medium text-lg">
+                                                Pengen liat hasil before dan afternya, cek beberapa Project Dekorika di bawah ini deh... 👇
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {/* Project Carousel Slide (8 Images) */}
+                                    <ProjectCarousel />
+
+                                    <div className="text-center space-y-4 max-w-lg mx-auto mt-4">
+                                        <p className="text-gray-700 font-medium text-lg">
+                                            Selanjutnya, biar ga ketinggalan Promo Diskon dan request khusus apa yang bisa Anda dapat dari <span className="font-bold text-primary">Dekorika</span>... Langsung aja Yuk...
+                                        </p>
+                                    </div>
+
+                                    <div className="mt-10 max-w-lg mx-auto space-y-4">
+                                        <button 
+                                            onClick={() => handleWAMepssage('now')}
+                                            className="w-full bg-[#25D366] hover:bg-[#1EBE5A] text-white py-4 rounded-xl font-bold text-lg transition-all shadow-lg flex items-center justify-center group"
+                                        >
+                                            <i data-lucide="message-circle" className="mr-2 group-hover:scale-110 transition-transform"></i> 
+                                            Saya Mau Sekarang
+                                        </button>
+                                        
+                                        <button 
+                                            onClick={() => handleWAMessage('consult')}
+                                            className="w-full bg-white border-2 border-secondary hover:bg-gray-50 text-secondary py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center"
+                                        >
+                                            Konsultasi Gratis Dulu Deh
+                                        </button>
+                                    </div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </div>
+                    
+                    <BackButton onClick={onBack} />
+                </motion.div>
+            );
+        };
+
+        const App = () => {
+            const [step, setStep] = useState(1);
+            const [title, setTitle] = useState('');
+            const [userName, setUserName] = useState('');
+
+            // Initialize Icons when step changes
+            useEffect(() => {
+                lucide.createIcons();
+            }, [step]);
+
+            const nextStep = () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                setStep(prev => prev + 1);
+            };
+            
+            const prevStep = () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                setStep(prev => prev - 1);
+            };
+
+            const greetingName = title ? `${title} ${userName}` : userName;
+
+            return (
+                <div className="min-h-screen relative font-sans text-gray-800">
+                    <Header />
+
+                    <div className="w-full relative z-10 pt-4">
+                        <AnimatePresence mode="wait">
+                            {step === 1 && <StepAwareness key="step1" onNext={nextStep} />}
+                            {step === 2 && <StepGreeting key="step2" onNext={nextStep} onBack={prevStep} userName={userName} setUserName={setUserName} title={title} setTitle={setTitle} />}
+                            {step === 3 && <StepMain key="step3" onBack={prevStep} greetingName={greetingName || 'Sahabat'} />}
+                        </AnimatePresence>
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
