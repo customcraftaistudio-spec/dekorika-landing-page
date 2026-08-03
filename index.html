@@ -317,20 +317,17 @@
             const materials = [
                 { 
                     id: 'Basic', 
-                    minMultiplier: 1.0, 
-                    maxMultiplier: 1.5, 
+                    basePrice: 1800000, 
                     desc: 'Material yang dapat dijangkau namun tidak cheapy dan tetap terkesan mewah dan tahan lama.' 
                 },
                 { 
                     id: 'Middle Range', 
-                    minMultiplier: 1.22, 
-                    maxMultiplier: 1.77, 
+                    basePrice: 2200000, 
                     desc: 'Ketahanan lebih baik dengan pilihan yang lebih variatif namun tetap bisa disesuaikan dan Furniture yang lebih versatile.' 
                 },
                 { 
                     id: 'Exclusive', 
-                    minMultiplier: 1.5, 
-                    maxMultiplier: 2.0, 
+                    basePrice: 2700000, 
                     desc: 'Material terbaik, ketahanan dan estetika lebih tinggi, kualitas furniture terbaik, mewujudkan kesan mewah dan privilege disetiap sudut ruangan Anda.' 
                 }
             ];
@@ -342,14 +339,14 @@
                 }
                 
                 const area = parseFloat(length) * parseFloat(width);
-                const basePricePerSqm = 1800000; // Harga dasar diubah menjadi 1.800.000
                 const selectedMaterial = materials.find(m => m.id === material);
                 
-                const rawTotal = area * basePricePerSqm;
+                // Menghitung harga dasar berdasarkan tipe material yang dipilih x Luas
+                const rawTotal = area * selectedMaterial.basePrice;
                 
-                // Menghitung range minimum dan maksimum berdasarkan persentase
-                const minPrice = rawTotal * selectedMaterial.minMultiplier;
-                const maxPrice = rawTotal * selectedMaterial.maxMultiplier;
+                // Menghitung range minimum (100%) dan maksimum (125%)
+                const minPrice = rawTotal * 1.0;
+                const maxPrice = rawTotal * 1.25;
 
                 setCalcResult({
                     area,
@@ -407,15 +404,16 @@
                                 <strong>Dekorika Interior Design</strong> adalah Perusahaan yang bergerak di bidang Interior dan Konstruksi yang telah berdiri sejak tahun 2022.
                             </p>
                             <p className="text-gray-600 leading-relaxed">
-                                Kami dapat mengerjakan Proyek Hunian, Kantor maupun Ruangan Komersil dari mulai proses Desain sampai dengan proses pekerjaan di lapangan. Perpaduan desain kreatif, workshop yang handal dan di dukung oleh tenaga ahli yang profesional membuat kami dapat selalu menyajikan desain interior terbaik sesuai dengan kebutuhan dan keinginan Anda.
+                                Kami dapat mengerjakan Proyek Hunian, Kantor maupun Ruangan Komersil dari mulai proses Desain sampai dengan proses pekerjaan di lapangan. 
                             </p>
+                                Perpaduan desain kreatif, workshop yang handal dan di dukung oleh tenaga ahli yang profesional membuat kami dapat selalu menyajikan desain interior terbaik sesuai dengan kebutuhan dan keinginan Anda.
                         </div>
                     </div>
 
                     {/* Section 2: Problem & Solution Table */}
                     <div className="mb-20">
                         <h3 className="text-2xl font-serif font-bold text-center text-secondary mb-8">
-                            3 Alasan Utama Bebas Pusing Renovasi Rumah bersama Dekorika ...
+                            3 Alasan Utama Anda Bebas Pusing Renovasi Rumah dengan Dekorika ...
                         </h3>
                         <div className="bg-white rounded-3xl shadow-md overflow-hidden border border-gray-200">
                             <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-200">
@@ -554,6 +552,7 @@
                                     <div className="inline-flex items-center text-green-700 bg-green-50 px-4 py-2 rounded-full text-sm font-medium mt-4 border border-green-200">
                                         <i data-lucide="check-circle" className="w-4 h-4 mr-2"></i>
                                         Udah include Furniture yang cocok dan sesuai konsep Anda! 
+                                    
                                         Bayangin aja, Harga Cuma Segini, sangat WORTHED untuk bertahun-tahun kebahagiaan di rumah Anda Sendiri.
 
                                         Selanjutnya, biar ga penasaran Promo apa dan penyesuaian apa yang bisa Anda dapetin dari Dekorika... Langsung aja... 
