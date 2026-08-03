@@ -317,17 +317,17 @@
             const materials = [
                 { 
                     id: 'Basic', 
-                    multiplier: 1.2, 
+                    multiplier: 1, 
                     desc: 'Material yang dapat dijangkau namun tidak cheapy dan tetap terkesan mewah dan tahan lama.' 
                 },
                 { 
                     id: 'Middle Range', 
-                    multiplier: 1.75, 
+                    multiplier: 1.25, 
                     desc: 'Ketahanan lebih baik dengan pilihan yang lebih variatif namun tetap bisa disesuaikan dan Furniture yang lebih versatile.' 
                 },
                 { 
                     id: 'Exclusive', 
-                    multiplier: 2.5, 
+                    multiplier: 1.5, 
                     desc: 'Material terbaik, ketahanan dan estetika lebih tinggi, kualitas furniture terbaik, mewujudkan kesan mewah dan privilege disetiap sudut ruangan Anda.' 
                 }
             ];
@@ -339,7 +339,7 @@
                 }
                 
                 const area = parseFloat(length) * parseFloat(width);
-                const basePricePerSqm = 2500000;
+                const basePricePerSqm = 1800000;
                 const selectedMaterial = materials.find(m => m.id === material);
                 
                 const rawTotal = area * basePricePerSqm;
@@ -548,7 +548,7 @@
                                     
                                     <div className="inline-flex items-center text-green-700 bg-green-50 px-4 py-2 rounded-full text-sm font-medium mt-4 border border-green-200">
                                         <i data-lucide="check-circle" className="w-4 h-4 mr-2"></i>
-                                        Sudah include Furniture yang cocok dan sesuai konsep Anda! 
+                                        Udah include Furniture yang cocok dan sesuai konsep Anda! 
                                         Bayangin aja, Harga Cuma Segini, sangat WORTHED untuk bertahun-tahun kebahagiaan di rumah Anda Sendiri.
 
                                         Selanjutnya, biar ga penasaran Promo apa dan penyesuaian apa yang bisa Anda dapetin dari Dekorika... Langsung aja... 
